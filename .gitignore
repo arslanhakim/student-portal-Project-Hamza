@@ -1,0 +1,17 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Local environment overrides (if you ever add a .env)
+.env
+.env.local
+
+# Session storage (just in case)
+/tmp/
