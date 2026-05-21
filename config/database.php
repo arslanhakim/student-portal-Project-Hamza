@@ -7,8 +7,8 @@
 // Database credentials
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'student_auth_db');
-define('DB_USER', 'root');        // XAMPP default
-define('DB_PASS', '');             // XAMPP default (empty password)
+define('DB_USER', 'root');
+define('DB_PASS', '');
 define('DB_CHARSET', 'utf8mb4');
 
 // Data Source Name

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php -l c:\\\\xampp\\\\htdocs\\\\student-auth\\\\admin\\\\_layout.php)",
+      "Bash(php -l c:\\\\xampp\\\\htdocs\\\\student-auth\\\\admin\\\\dashboard.php)",
+      "Bash(php -l c:\\\\xampp\\\\htdocs\\\\student-auth\\\\admin\\\\students.php)",
+      "Bash(php -l c:\\\\xampp\\\\htdocs\\\\student-auth\\\\dashboard.php)",
+      "PowerShell($php = \"C:\\\\xampp\\\\php\\\\php.exe\"; if \\(Test-Path $php\\) { & $php -l c:\\\\xampp\\\\htdocs\\\\student-auth\\\\admin\\\\_layout.php; & $php -l c:\\\\xampp\\\\htdocs\\\\student-auth\\\\admin\\\\dashboard.php; & $php -l c:\\\\xampp\\\\htdocs\\\\student-auth\\\\admin\\\\students.php; & $php -l c:\\\\xampp\\\\htdocs\\\\student-auth\\\\dashboard.php } else { \"php.exe not at $php — skipping lint\" })"
+    ]
+  }
+}

@@ -339,13 +339,19 @@ body {
     padding: var(--space-xl) var(--space-lg);
   }
 
+  .card-title {
+    font-size: 1.25rem;
+  }
+}
+
+/* .form-row pairs two fields side-by-side on screens ≥ 640px and stacks them
+   below that. The breakpoint is wider than the typical mobile cutoff because
+   most paired fields (Student ID + Department, Password + Confirm) need ~280px
+   each to remain comfortable to type into. */
+@media (max-width: 640px) {
   .form-row {
     grid-template-columns: 1fr;
     gap: 0;
-  }
-
-  .card-title {
-    font-size: 1.25rem;
   }
 }
 
@@ -489,7 +495,9 @@ body {
 }
 
 .password-wrapper .form-input {
-  padding-right: 3rem;
+  /* Leaves room for the SHOW/HIDE toggle button on the right; was 3rem
+     which collided with placeholder text. */
+  padding-right: 4.5rem;
 }
 
 .password-toggle {
@@ -521,3 +529,2032 @@ body {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
+
+/* ============================================
+   ADMIN UI
+   Built on the same design tokens as the auth pages.
+   Reuses --color-*, --space-*, --radius-*, --shadow-*.
+   ============================================ */
+
+/* The admin pages live on a calmer surface than the gradient auth pages —
+   working environments benefit from less visual noise. */
+body.admin-body {
+  background: #f1f5f9;
+  display: block; /* override .page-wrapper centering if present in cascade */
+}
+
+/* ---- Inline SVG icon (Lucide-style) ---- */
+.icon {
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* ============================================
+   TOPBAR
+   ============================================ */
+.admin-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  height: 60px;
+  padding: 0 var(--space-lg);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+/* User group sits on the right; hamburger + brand naturally group on left. */
+.admin-topbar-user {
+  margin-left: auto;
+}
+
+.admin-topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* Override the auth-page 56px logo for compact topbar use */
+.admin-topbar .brand-logo {
+  width: 34px;
+  height: 34px;
+  font-size: 15px;
+  margin-bottom: 0;
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+.admin-topbar-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+}
+
+.admin-topbar-user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.admin-topbar-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* Role pill in the topbar (sits next to the admin name) */
+.admin-topbar-role {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(79, 70, 229, 0.18);
+}
+
+/* Compact button variant for tight spaces (topbar, page header CTA) */
+.btn-compact {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.8125rem;
+}
+
+/* Outlined secondary button — same shape as .btn but neutral background,
+   indigo on hover (NOT red — .btn-secondary's red hover is reserved for
+   destructive actions like Sign out). Use for non-destructive secondary
+   actions next to a primary CTA (e.g., "Export CSV" beside "Add Student"). */
+.btn-outline {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1.5px solid var(--color-border);
+}
+
+.btn-outline:hover {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Mobile drawer toggle (hamburger). Hidden on desktop; shown <768px. */
+.admin-menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  cursor: pointer;
+  transition:
+    background var(--transition),
+    color var(--transition),
+    border-color var(--transition);
+}
+
+.admin-menu-toggle:hover {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* Drawer header — visible only inside the open mobile drawer */
+.admin-drawer-header {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.admin-drawer-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.admin-drawer-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition:
+    background var(--transition),
+    color var(--transition);
+}
+
+.admin-drawer-close:hover {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* Backdrop behind the open drawer (mobile only) */
+.admin-drawer-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 49;
+}
+
+/* ============================================
+   SHELL (sidebar + main)
+   ============================================ */
+.admin-shell {
+  display: flex;
+  align-items: stretch;
+  min-height: calc(100vh - 60px);
+}
+
+.admin-sidebar {
+  flex-shrink: 0;
+  width: 240px;
+  padding: var(--space-md) var(--space-sm);
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  position: sticky;
+  top: 60px;
+  align-self: flex-start;
+  height: calc(100vh - 60px);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  transition:
+    background var(--transition),
+    color var(--transition);
+}
+
+.admin-sidebar-link .icon {
+  color: var(--color-text-muted);
+  transition: color var(--transition);
+}
+
+.admin-sidebar-link:hover {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.admin-sidebar-link:hover .icon {
+  color: var(--color-primary);
+}
+
+.admin-sidebar-link.active {
+  background: var(--color-primary);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-sidebar-link.active .icon,
+.admin-sidebar-link.active:hover .icon {
+  color: white;
+}
+
+.admin-sidebar-link.active:hover {
+  background: var(--color-primary-hover);
+  color: white;
+}
+
+.admin-main {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-xl);
+  max-width: 1280px;
+}
+
+/* ============================================
+   PAGE HEADER
+   ============================================ */
+.admin-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.admin-page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+}
+
+/* Container for two or more buttons in the page header (e.g., Export CSV +
+   Add Student on students.php). Keeps them grouped on the right side. */
+.admin-page-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.admin-page-subtitle {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+/* ============================================
+   STAT CARDS
+   ============================================ */
+.admin-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.admin-stat-card {
+  position: relative;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition),
+    border-color var(--transition);
+}
+
+.admin-stat-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.admin-stat-icon {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.admin-stat-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.5rem;
+}
+
+.admin-stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+  font-family: "JetBrains Mono", monospace;
+  line-height: 1.1;
+}
+
+/* ============================================
+   PANEL (white container)
+   ============================================ */
+.admin-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-lg) var(--space-xl);
+  margin-bottom: var(--space-xl);
+}
+
+.admin-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.admin-panel-title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+}
+
+.admin-panel-link {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.admin-panel-link:hover {
+  color: var(--color-primary-hover);
+}
+
+/* ============================================
+   SEARCH (input with leading icon + inline clear)
+   ============================================ */
+.admin-search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.admin-search-field {
+  position: relative;
+  flex: 1;
+}
+
+.admin-search-field .icon-leading {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.admin-search-field .form-input {
+  padding-left: 38px;
+  padding-right: 38px;
+}
+
+.admin-search-clear-btn {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    color var(--transition),
+    background var(--transition);
+}
+
+.admin-search-clear-btn:hover {
+  color: var(--color-error);
+  background: var(--color-error-bg);
+}
+
+/* ============================================
+   TABLE
+   ============================================ */
+.admin-table-wrap {
+  overflow-x: auto;
+  margin: 0 calc(-1 * var(--space-xl));
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.admin-table thead th {
+  text-align: left;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  padding: 0.625rem var(--space-md);
+  background: #f8fafc;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.admin-table thead th:first-child { padding-left: var(--space-xl); }
+.admin-table thead th:last-child  { padding-right: var(--space-xl); }
+
+.admin-table tbody td {
+  padding: 0.875rem var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+  color: var(--color-text);
+}
+
+.admin-table tbody td:first-child { padding-left: var(--space-xl); }
+.admin-table tbody td:last-child  { padding-right: var(--space-xl); }
+
+.admin-table tbody tr {
+  transition: background var(--transition);
+}
+
+.admin-table tbody tr:hover {
+  background: var(--color-primary-light);
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table .mono {
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 600;
+  color: var(--color-primary);
+  font-size: 0.8125rem;
+}
+
+.admin-table .actions-col {
+  width: 1%;
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* Sortable column header link */
+.sort-link {
+  color: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+
+.sort-link:hover {
+  color: var(--color-primary);
+}
+
+.sort-arrow {
+  font-size: 0.625rem;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+/* ============================================
+   PILL (role badge)
+   ============================================ */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.pill-admin {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-color: rgba(79, 70, 229, 0.2);
+}
+
+.pill-student {
+  background: #f1f5f9;
+  color: var(--color-text-muted);
+  border-color: var(--color-border);
+}
+
+/* Status pills (used in the admin students list) — icon + label */
+.pill-active,
+.pill-inactive {
+  gap: 4px;
+}
+
+.pill-active {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
+}
+
+.pill-inactive {
+  background: #fef3c7;
+  color: #92400e;
+  border-color: #fde68a;
+}
+
+/* Activity-log result pills. Reuse the existing pill base; .pill-success
+   borrows the mint-green palette from .pill-active so the visual language
+   stays unified, but the name reflects audit-log semantics. .pill-failed
+   is red (the error tokens), distinct from .pill-inactive's amber. */
+.pill-success,
+.pill-failed {
+  gap: 4px;
+}
+
+.pill-success {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
+}
+
+.pill-failed {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+  border-color: var(--color-error-border);
+}
+
+/* Interactive pill variant — used as a status toggle in the students table.
+   Pairs with the existing .pill-active / .pill-inactive color rules. */
+.pill-button {
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    filter var(--transition),
+    box-shadow var(--transition),
+    border-color var(--transition);
+}
+
+.pill-button:hover:not(:disabled) {
+  filter: brightness(0.96);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.pill-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.pill-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Inline confirmation cell for the status toggle (mirrors .actions-default /
+   .actions-confirm structure used by the delete button). */
+.status-default {
+  display: inline-flex;
+  align-items: center;
+}
+
+.status-confirm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+}
+
+.status-default[hidden],
+.status-confirm[hidden] {
+  display: none;
+}
+
+/* ============================================
+   ICON BUTTONS (table row actions)
+   ============================================ */
+.action-buttons {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.action-form {
+  display: inline;
+  margin: 0;
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-decoration: none;
+  font-family: inherit;
+  transition:
+    background var(--transition),
+    color var(--transition),
+    border-color var(--transition);
+}
+
+.btn-icon:hover {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-color: rgba(79, 70, 229, 0.18);
+}
+
+.btn-icon-danger:hover {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+  border-color: var(--color-error-border);
+}
+
+.btn-icon:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ---- Inline delete confirmation (replaces native confirm() dialog) ---- */
+.actions-default {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.actions-confirm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+}
+
+.actions-default[hidden],
+.actions-confirm[hidden] {
+  display: none;
+}
+
+.confirm-prompt {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-error);
+  margin-right: 2px;
+}
+
+.btn-confirm-yes,
+.btn-confirm-no {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  border: 1px solid;
+  transition:
+    background var(--transition),
+    color var(--transition),
+    border-color var(--transition);
+}
+
+.btn-confirm-yes {
+  background: var(--color-error);
+  color: white;
+  border-color: var(--color-error);
+}
+
+.btn-confirm-yes:hover {
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
+.btn-confirm-yes:focus-visible {
+  outline: 2px solid var(--color-error);
+  outline-offset: 2px;
+}
+
+.btn-confirm-no {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+.btn-confirm-no:hover {
+  background: var(--color-bg);
+}
+
+/* ============================================
+   PAGINATION
+   ============================================ */
+.pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+  flex-wrap: wrap;
+}
+
+.pagination-info {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.pagination-sep {
+  margin: 0 6px;
+  color: var(--color-border);
+}
+
+.pagination {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.pagination-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 10px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition:
+    background var(--transition),
+    color var(--transition),
+    border-color var(--transition);
+}
+
+.pagination-link.icon-only {
+  padding: 0;
+  min-width: 32px;
+}
+
+.pagination-link:hover:not(.disabled):not(.active) {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.pagination-link.active {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+  cursor: default;
+}
+
+.pagination-link.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.pagination-ellipsis {
+  padding: 0 6px;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+.empty-state {
+  text-align: center;
+  padding: var(--space-2xl) var(--space-lg);
+  color: var(--color-text-muted);
+}
+
+.empty-state-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  margin-bottom: var(--space-md);
+}
+
+.empty-state-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 0.25rem;
+}
+
+.empty-state p {
+  font-size: 0.875rem;
+  margin-bottom: var(--space-md);
+}
+
+.empty-state-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: var(--color-primary-light);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition:
+    background var(--transition),
+    color var(--transition);
+}
+
+.empty-state-action:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+/* ============================================
+   ALERT — info variant
+   ============================================ */
+.alert-info {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-color: rgba(79, 70, 229, 0.2);
+}
+
+.alert-info a {
+  color: var(--color-primary);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.alert-info a:hover {
+  color: var(--color-primary-hover);
+}
+
+/* Admin notice on the student dashboard — match the dashboard card width
+   so the banner doesn't stretch wider than the card it sits above. */
+.admin-notice {
+  width: 100%;
+  max-width: 720px;
+}
+
+/* ============================================
+   ADMIN FORMS (add/edit student)
+   ============================================ */
+.admin-form {
+  max-width: 960px;
+}
+
+/* Action row at the bottom of the form (Save / Cancel).
+   Sticky to the bottom of the viewport so that on tall forms the Save button
+   is always one click away — the surface-colored background keeps the bar
+   visually crisp as content scrolls underneath it. On short forms that fit
+   in the viewport, the sticky behavior is a no-op and the bar simply sits at
+   the natural end of the form. */
+.admin-form-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+  padding: var(--space-md) 0;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.admin-form-actions .btn {
+  width: auto;
+  padding: 0.65rem 1.5rem;
+}
+
+.admin-form-cancel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  padding: 0.5rem 0.25rem;
+  transition: color var(--transition);
+}
+
+.admin-form-cancel:hover {
+  color: var(--color-primary);
+}
+
+/* Read-only meta row at top of edit form (Account ID, Joined date).
+   2-column grid on desktop, stacks under 640px (see breakpoint below). */
+.admin-form-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-lg);
+}
+
+@media (max-width: 640px) {
+  .admin-form-meta {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-form-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.admin-form-meta-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.admin-form-meta-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.admin-form-meta-value.mono {
+  font-family: "JetBrains Mono", monospace;
+  color: var(--color-primary);
+}
+
+/* Subsection within the form (e.g., the optional password block on edit) */
+.admin-form-section {
+  margin-top: var(--space-lg);
+  padding-top: var(--space-lg);
+  border-top: 1px dashed var(--color-border);
+}
+
+.admin-form-section-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+
+.admin-form-section-hint {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-md);
+}
+
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+
+   ≥1024px : default — full layout (4-col stats, 240px sidebar)
+    768–1023: tighter sidebar (200px), 2-col stats
+    <768px  : DRAWER mode — sidebar becomes off-canvas, main goes full-width
+    <640px  : stats stack to single column
+    <480px  : tightest padding, smaller h1, stacked page header
+   ============================================ */
+
+/* --- Tablet / laptop-mid (1024px down): denser sidebar, 2-col stats --- */
+@media (max-width: 1023px) {
+  .admin-sidebar {
+    width: 200px;
+  }
+
+  .admin-stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* --- Mobile (<768px): drawer pattern, main goes full-width --- */
+@media (max-width: 767px) {
+  /* Topbar: hide brand text + role pill, ellipsis the name, never overflow */
+  .admin-topbar {
+    height: 56px;
+    padding: 0 var(--space-md);
+    gap: var(--space-sm);
+  }
+
+  .admin-topbar-title {
+    display: none; /* leave just the "S" logo for brand identity */
+  }
+
+  .admin-topbar-role {
+    display: none; /* free up width — admin presence is already implied */
+  }
+
+  .admin-topbar-name {
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .admin-topbar-user {
+    gap: var(--space-sm);
+    min-width: 0; /* allow ellipsis to actually clip */
+  }
+
+  /* Show the hamburger */
+  .admin-menu-toggle {
+    display: inline-flex;
+    flex-shrink: 0;
+  }
+
+  /* Shell: stack so main takes full viewport width */
+  .admin-shell {
+    display: block;
+    min-height: auto;
+  }
+
+  /* Sidebar becomes a fixed off-canvas drawer (slides in from left) */
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    max-width: 80vw;
+    height: 100vh;
+    padding: 0;
+    background: var(--color-surface);
+    border-right: 1px solid var(--color-border);
+    border-bottom: none;
+    box-shadow: var(--shadow-lg);
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    overscroll-behavior: contain; /* prevent body scroll when drawer scrolls */
+    align-self: stretch;
+  }
+
+  body.drawer-open .admin-sidebar {
+    transform: translateX(0);
+  }
+
+  /* Drawer header (now visible) */
+  .admin-drawer-header {
+    display: flex;
+  }
+
+  /* Backdrop behind the drawer (now visible) */
+  .admin-drawer-backdrop {
+    display: block;
+  }
+
+  body.drawer-open .admin-drawer-backdrop {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Lock body scroll when drawer is open */
+  body.drawer-open {
+    overflow: hidden;
+  }
+
+  /* Nav links — pad the drawer sides */
+  .admin-sidebar-link {
+    flex-shrink: 0;
+    white-space: nowrap;
+    margin: 2px var(--space-sm);
+  }
+
+  /* Main content: full width, tighter padding */
+  .admin-main {
+    padding: var(--space-md);
+    max-width: 100%;
+  }
+
+  /* Page header wraps so a long title + CTA don't overflow */
+  .admin-page-header {
+    flex-wrap: wrap;
+  }
+
+  /* Panels and tables — denser, no negative margin (would overflow viewport) */
+  .admin-panel {
+    padding: var(--space-md);
+  }
+
+  .admin-table-wrap {
+    margin: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Restore edge padding INSIDE the table since the wrap no longer extends */
+  .admin-table thead th:first-child,
+  .admin-table tbody td:first-child {
+    padding-left: var(--space-md);
+  }
+
+  .admin-table thead th:last-child,
+  .admin-table tbody td:last-child {
+    padding-right: var(--space-md);
+  }
+
+  /* Right-edge gradient hint that the table can scroll horizontally */
+  .admin-table-wrap {
+    background:
+      linear-gradient(
+        to right,
+        transparent calc(100% - 28px),
+        rgba(15, 23, 42, 0.06) 100%
+      );
+    background-attachment: local;
+    background-repeat: no-repeat;
+  }
+
+  .admin-search {
+    flex-wrap: wrap;
+  }
+
+  /* Form action bar: NOT sticky on mobile — would cover form content as the
+     user scrolls. Natural position at end of form is fine. */
+  .admin-form-actions {
+    position: static;
+    background: transparent;
+  }
+
+  .pagination-bar {
+    justify-content: center;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .pagination {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+/* --- Phablet / small tablet (<640px): stat grid stacks --- */
+@media (max-width: 640px) {
+  .admin-stat-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- Phone (<480px): tightest padding, smaller titles, stacked page header --- */
+@media (max-width: 479px) {
+  .admin-main {
+    padding: var(--space-sm);
+  }
+
+  .admin-page-title {
+    font-size: 1.25rem;
+  }
+
+  .admin-page-subtitle {
+    font-size: 0.8125rem;
+  }
+
+  /* Stack the page header so the CTA drops below the title */
+  .admin-page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-sm);
+  }
+
+  .admin-page-header .btn,
+  .admin-page-header a.btn-compact,
+  .admin-page-header button.btn-compact {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .admin-page-header-actions {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .admin-stat-card {
+    padding: var(--space-md);
+  }
+
+  .admin-stat-value {
+    font-size: 1.5rem;
+  }
+
+  /* Sign-out button text becomes the cramped sacrifice — its label is the only
+     thing left that can shrink. Keep visible (essential action). */
+  .admin-topbar-user .btn-compact {
+    padding: 0.4rem 0.65rem;
+    font-size: 0.75rem;
+  }
+
+  .admin-topbar-name {
+    max-width: 80px;
+  }
+}
+
+/* ============================================
+   STUDENT DASHBOARD ENRICHED
+   The post-login landing page. Multi-section layout with hero greeting,
+   profile + stat trio, quick actions grid, and recent activity feed.
+   Uses existing tokens only; no new CSS variables.
+   ============================================ */
+
+/* Top-level container — overrides .page-wrapper centering when this widget
+   is present, so a tall dashboard doesn't get clipped above the fold.
+   :has() is supported in Chrome 105+, Safari 15.4+, Firefox 121+. */
+body:has(.student-dash) .page-wrapper {
+  justify-content: flex-start;
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+}
+
+.student-dash {
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.student-dash .alert {
+  margin-bottom: 0; /* gap on container handles spacing */
+}
+
+/* --- Section 1: Hero --- */
+.dash-hero {
+  position: relative;
+  background:
+    linear-gradient(135deg, var(--color-primary-light) 0%, #fdf4ff 55%, #f0f9ff 100%);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.dash-hero::after {
+  /* Subtle decorative wash on the right edge — adds depth without an illustration */
+  content: "";
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(79, 70, 229, 0.12), transparent 70%);
+  pointer-events: none;
+}
+
+.dash-hero-greeting {
+  font-size: 1.875rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  line-height: 1.2;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.dash-hero-wave {
+  display: inline-block;
+  transform-origin: 70% 70%;
+  animation: dash-wave 1.8s ease-in-out 1;
+}
+
+@keyframes dash-wave {
+  0%, 100% { transform: rotate(0deg); }
+  15% { transform: rotate(14deg); }
+  30% { transform: rotate(-8deg); }
+  45% { transform: rotate(14deg); }
+  60% { transform: rotate(-4deg); }
+  75% { transform: rotate(10deg); }
+}
+
+.dash-hero-date {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+/* --- Section 2: Profile + stat trio --- */
+.dash-profile-row {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: var(--space-lg);
+  align-items: stretch;
+}
+
+/* Profile card */
+.dash-profile-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+}
+
+.dash-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-sm);
+  box-shadow: var(--shadow-md);
+}
+
+.dash-profile-name {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+  word-break: break-word;
+}
+
+.dash-profile-email {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  word-break: break-all;
+  margin-bottom: var(--space-xs);
+}
+
+/* Positive (green) pill variant for the Student role — feels welcoming */
+.pill-positive {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
+}
+
+.dash-profile-edit {
+  margin-top: var(--space-sm);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.dash-profile-edit:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
+/* Stat trio (sits to the right of the profile card on desktop) */
+.dash-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-md);
+}
+
+.dash-stat-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition:
+    transform var(--transition),
+    border-color var(--transition),
+    box-shadow var(--transition);
+}
+
+.dash-stat-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.dash-stat-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.5rem;
+}
+
+.dash-stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.dash-stat-value.mono {
+  font-family: "JetBrains Mono", monospace;
+  color: var(--color-primary);
+  font-size: 1.625rem;
+}
+
+/* Textual stat (department) — smaller, with leading icon */
+.dash-stat-value-textual {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dash-stat-value-textual .icon {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+/* --- Section: shared title + container helper --- */
+.dash-section-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-md);
+}
+
+/* --- Section 3: Quick actions --- */
+.dash-quick-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
+}
+
+.dash-quick-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-lg) var(--space-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+  color: var(--color-text);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: center;
+  transition:
+    transform var(--transition),
+    border-color var(--transition),
+    box-shadow var(--transition),
+    color var(--transition);
+}
+
+.dash-quick-action .icon {
+  color: var(--color-text-muted);
+  transition:
+    color var(--transition),
+    transform var(--transition);
+}
+
+.dash-quick-action:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.dash-quick-action:hover .icon {
+  color: var(--color-primary);
+  transform: scale(1.1);
+}
+
+.dash-quick-action:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* --- Section 4: Recent activity --- */
+.dash-activity-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.dash-activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dash-activity-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.dash-activity-item:last-child {
+  border-bottom: none;
+}
+
+.dash-activity-icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.dash-activity-icon-success {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.dash-activity-icon-error {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+.dash-activity-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dash-activity-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.dash-activity-time {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.dash-activity-ip {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.dash-activity-empty {
+  padding: var(--space-2xl) var(--space-lg);
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+/* --- Responsive --- */
+
+/* Tablet / smaller laptop: profile stacks above stats; quick actions 2-col */
+@media (max-width: 1023px) {
+  .dash-profile-row {
+    grid-template-columns: 1fr;
+  }
+  .dash-quick-actions {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Phablet: stat grid collapses to single column */
+@media (max-width: 640px) {
+  .dash-stat-grid {
+    grid-template-columns: 1fr;
+  }
+  .dash-hero-greeting {
+    font-size: 1.5rem;
+  }
+}
+
+/* Phone: tighten hero padding, quick actions stack, hide IP column on activity */
+@media (max-width: 480px) {
+  .dash-quick-actions {
+    grid-template-columns: 1fr;
+  }
+  .dash-hero {
+    padding: var(--space-lg);
+  }
+  .dash-hero-greeting {
+    font-size: 1.375rem;
+  }
+  .dash-activity-item {
+    padding: var(--space-md);
+  }
+  .dash-activity-ip {
+    display: none;
+  }
+}
+
+/* Respect users who prefer reduced motion — kill the wave + transitions */
+@media (prefers-reduced-motion: reduce) {
+  .dash-hero-wave {
+    animation: none;
+  }
+  .dash-stat-card,
+  .dash-quick-action {
+    transition: none;
+  }
+}
+
+/* ============================================
+   ACTIVITY LOG (admin/activity.php)
+   Filter bar + result pills + IP cell styling. Stat cards + table reuse
+   the existing .admin-stat-* and .admin-table classes.
+   ============================================ */
+
+.activity-filters {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.activity-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 180px;
+  min-width: 0;
+}
+
+.activity-filter-group .form-input {
+  width: 100%;
+}
+
+/* Action buttons (Apply / Clear) sit at the end of the filter row.
+   align-self: flex-end keeps them vertically aligned with the bottom of
+   the input row (the inputs sit lower because they have labels above). */
+.activity-filter-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex: 0 0 auto;
+  align-self: flex-end;
+}
+
+/* IP address cell — mono + muted to differentiate from the email column.
+   Distinct from .admin-table .mono which uses indigo (reserved for IDs). */
+.activity-ip {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .activity-filter-group {
+    flex: 1 1 100%;
+  }
+  .activity-filter-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .activity-filter-actions .btn {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+}
+
+/* ============================================
+   STUDENT PROFILE EDIT (profile.php)
+   Visual polish: wider card, structured sections, friendly accents.
+   Builds on the existing .card / .form-group / .admin-form-meta-* /
+   .admin-form-section-* classes — no logic-related changes.
+   ============================================ */
+
+/* Wider variant of .card-wide for the profile form. The default .card-wide
+   (520px) leaves the form cramped on desktop; this gives it room to breathe
+   while keeping line lengths readable for the editable fields. */
+.profile-card {
+  max-width: 760px;
+}
+
+/* Back link styled as a small outlined button at the top of the card.
+   More prominent than a bare text link, but visually subdued so it doesn't
+   compete with the page title. */
+.profile-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.4rem 0.75rem;
+  margin-bottom: var(--space-lg);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition:
+    background var(--transition),
+    color var(--transition),
+    border-color var(--transition),
+    transform var(--transition);
+}
+
+.profile-back-link:hover {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  transform: translateX(-2px);
+}
+
+/* Pencil icon next to the "Edit Profile" page title */
+.profile-title-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-right: 8px;
+  vertical-align: middle;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.profile-card .card-title {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Section header — small muted uppercase label that groups the next block.
+   Used above the read-only meta block ("Account info") and above the
+   editable fields ("Profile details"). The "Change Password" subhead inside
+   .admin-form-section keeps its own existing styling. */
+.profile-section-title {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  margin: var(--space-md) 0 var(--space-sm);
+}
+
+/* Read-only meta block — 3 columns on top row + 2 on bottom, generous padding,
+   subtle indigo tint so it reads as informational rather than editable. */
+.profile-meta-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-md) var(--space-lg);
+  padding: var(--space-lg);
+  background: var(--color-primary-light);
+  border-color: rgba(79, 70, 229, 0.15);
+}
+
+/* More breathing room between label and value inside each tile */
+.profile-meta-grid .admin-form-meta-item {
+  gap: 6px;
+}
+
+@media (max-width: 640px) {
+  .profile-meta-grid {
+    grid-template-columns: 1fr;
+    padding: var(--space-md);
+  }
+}
+
+/* Make the divider above the "Change Password" subsection more deliberate
+   on profile.php — solid instead of dashed, default --color-border weight.
+   Scoped to .profile-card so the admin edit form's dashed divider stays. */
+.profile-card .admin-form-section {
+  border-top: 1px solid var(--color-border);
+}
+
+/* Save / Cancel action row. Not sticky — sits naturally at the card's bottom.
+   A sticky bar inside a centered card would float orphaned at the viewport
+   edge rather than feeling anchored to the form. */
+.profile-form-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-border);
+}
+
+.profile-form-actions .btn {
+  width: auto;
+  padding: 0.65rem 1.5rem;
+}
+
+.profile-cancel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  padding: 0.5rem 0.25rem;
+  transition: color var(--transition);
+}
+
+.profile-cancel:hover {
+  color: var(--color-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-back-link {
+    transition: none;
+  }
+}
+
+/* ============================================
+   TOGGLE SWITCH
+   Used on admin add/edit student forms for Account Status.
+   Built on a real <input type="checkbox"> for accessibility + native form
+   submission. The checkbox is visually hidden but keyboard-focusable; CSS
+   sibling selectors drive the visual track + thumb based on :checked state.
+   When the form is submitted, an unchecked toggle sends no key for `is_active`
+   at all — the server treats absence as 0 (inactive).
+   ============================================ */
+
+/* Visually hidden but kept in the focus order */
+.toggle-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  cursor: pointer;
+  user-select: none;
+  padding: 6px 0;
+}
+
+.toggle-track {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  background: var(--color-border);
+  border-radius: 999px;
+  transition: background 180ms cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+  transition: transform 180ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  min-width: 60px; /* keeps the row from jiggling as "Active"/"Inactive" swap */
+}
+
+.toggle-label::after {
+  content: "Inactive";
+  color: var(--color-text-muted);
+}
+
+/* On-state — triggered either by :checked sibling (interactive) or by
+   .is-on class (readonly variant rendered server-side for self-edit). */
+.toggle-input:checked ~ .toggle .toggle-track,
+.toggle.is-on .toggle-track {
+  background: var(--color-primary);
+}
+
+.toggle-input:checked ~ .toggle .toggle-thumb,
+.toggle.is-on .toggle-thumb {
+  transform: translateX(20px);
+}
+
+.toggle-input:checked ~ .toggle .toggle-label::after,
+.toggle.is-on .toggle-label::after {
+  content: "Active";
+  color: #047857;
+}
+
+/* Keyboard focus indicator on the track */
+.toggle-input:focus-visible ~ .toggle .toggle-track {
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.28);
+}
+
+/* Readonly variant — used when the admin is editing their own row. The
+   actual `is_active` value is sent by a sibling hidden input; this element
+   is purely visual. */
+.toggle-readonly,
+.toggle-readonly .toggle-track {
+  cursor: not-allowed;
+}
+
+.toggle-readonly {
+  opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle-track,
+  .toggle-thumb {
+    transition: none;
+  }
+}
+

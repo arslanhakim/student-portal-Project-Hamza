@@ -36,6 +36,33 @@ function requireLogin(): void {
  */
 function redirectIfLoggedIn(): void {
     if (isLoggedIn()) {
+        if (isAdmin()) {
+            header('Location: /student-auth/admin/dashboard.php');
+        } else {
+            header('Location: /student-auth/dashboard.php');
+        }
+        exit;
+    }
+}
+
+/**
+ * Helper: check if logged-in user is an admin.
+ */
+function isAdmin(): bool {
+    return isLoggedIn() && isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+}
+
+/**
+ * Helper: require admin role or redirect.
+ * Used at the top of every admin page.
+ */
+function requireAdmin(): void {
+    if (!isLoggedIn()) {
+        header('Location: /student-auth/auth/login.php');
+        exit;
+    }
+    if (!isAdmin()) {
+        // Logged in but not admin — send to student dashboard
         header('Location: /student-auth/dashboard.php');
         exit;
     }

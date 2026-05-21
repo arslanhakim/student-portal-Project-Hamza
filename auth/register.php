@@ -185,25 +185,22 @@ require_once __DIR__ . '/../includes/header.php';
 
     <form method="POST" action="/student-auth/auth/register.php" novalidate>
         <?= csrfField() ?>
-       <div class="form-group">
-            <label class="form-label" for="password">
-                Password <span class="required">*</span>
+        <div class="form-group">
+            <label class="form-label" for="full_name">
+                Full Name <span class="required">*</span>
             </label>
-            <div class="password-wrapper">
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    class="form-input <?= isset($errors['password']) ? 'has-error' : '' ?>"
-                    placeholder="Minimum 8 characters"
-                    autocomplete="new-password"
-                >
-                <button type="button" class="password-toggle" data-target="password" aria-label="Show password">Show</button>
-            </div>
-            <?php if (isset($errors['password'])): ?>
-                <span class="form-error"><?= htmlspecialchars($errors['password']) ?></span>
-            <?php else: ?>
-                <span class="form-hint">At least 8 characters, with uppercase, lowercase, and a number.</span>
+            <input
+                type="text"
+                id="full_name"
+                name="full_name"
+                class="form-input <?= isset($errors['full_name']) ? 'has-error' : '' ?>"
+                value="<?= htmlspecialchars($old['full_name']) ?>"
+                placeholder="Jane Doe"
+                maxlength="100"
+                autocomplete="name"
+            >
+            <?php if (isset($errors['full_name'])): ?>
+                <span class="form-error"><?= htmlspecialchars($errors['full_name']) ?></span>
             <?php endif; ?>
         </div>
 
@@ -278,14 +275,17 @@ require_once __DIR__ . '/../includes/header.php';
             <label class="form-label" for="password">
                 Password <span class="required">*</span>
             </label>
-            <input
-                type="password"
-                id="password"
-                name="password"
-                class="form-input <?= isset($errors['password']) ? 'has-error' : '' ?>"
-                placeholder="Minimum 8 characters"
-                autocomplete="new-password"
-            >
+            <div class="password-wrapper">
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    class="form-input <?= isset($errors['password']) ? 'has-error' : '' ?>"
+                    placeholder="Minimum 8 characters"
+                    autocomplete="new-password"
+                >
+                <button type="button" class="password-toggle" data-target="password" aria-label="Show password">Show</button>
+            </div>
             <?php if (isset($errors['password'])): ?>
                 <span class="form-error"><?= htmlspecialchars($errors['password']) ?></span>
             <?php else: ?>

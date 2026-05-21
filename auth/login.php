@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($errors)) {
         try {
             $stmt = $pdo->prepare("
-                SELECT id, full_name, email, password, student_id, department
+                SELECT id, full_name, email, password, student_id, department, role, is_active
                 FROM students
                 WHERE email = :email
                 LIMIT 1
@@ -80,9 +80,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([':email' => $email]);
             $user = $stmt->fetch();
 
-            $authSuccess = $user && password_verify($password, $user['password']);
+            $credentialsOk = $user && password_verify($password, $user['password']);
+            $accountActive = $user && (int) $user['is_active'] === 1;
+            $authSuccess   = $credentialsOk && $accountActive;
 
-            // Log the attempt (success or failure)
+            // Log the attempt (deactivated logins count as failures so the rate
+            // limiter still applies — attackers can't probe for active accounts
+            // without being throttled).
             $logStmt = $pdo->prepare("
                 INSERT INTO login_attempts (email, ip_address, successful)
                 VALUES (:email, :ip, :success)
@@ -94,7 +98,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ]);
 
             if (!$authSuccess) {
-                $errors['general'] = 'Invalid email or password.';
+                // Deliberate exception to user-enumeration concerns: legitimate
+                // users with deactivated accounts need to know to contact support
+                // rather than fight a "wrong password" message they can't fix.
+                if ($credentialsOk && !$accountActive) {
+                    $errors['general'] = 'Your account has been deactivated. Please contact an administrator.';
+                } else {
+                    $errors['general'] = 'Invalid email or password.';
+                }
             } else {
                 // --- 5. SUCCESS: create session ---
                 session_regenerate_id(true);
@@ -104,10 +115,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['email']      = $user['email'];
                 $_SESSION['student_id'] = $user['student_id'];
                 $_SESSION['department'] = $user['department'];
+                $_SESSION['role']       = $user['role'];
                 $_SESSION['logged_in']  = true;
                 $_SESSION['login_time'] = time();
 
-                header('Location: /student-auth/dashboard.php');
+                if ($user['role'] === 'admin') {
+                    header('Location: /student-auth/admin/dashboard.php');
+                } else {
+                    header('Location: /student-auth/dashboard.php');
+                }
                 exit;
             }
         } catch (PDOException $e) {
@@ -178,7 +194,7 @@ require_once __DIR__ . '/../includes/header.php';
             <?php endif; ?>
         </div>
 
-        <<div class="form-group">
+        <div class="form-group">
             <label class="form-label" for="password">
                 Password <span class="required">*</span>
             </label>

@@ -7,7 +7,11 @@
 require_once __DIR__ . '/config/session.php';
 
 if (isLoggedIn()) {
-    header('Location: /student-auth/dashboard.php');
+    if (isAdmin()) {
+        header('Location: /student-auth/admin/dashboard.php');
+    } else {
+        header('Location: /student-auth/dashboard.php');
+    }
 } else {
     header('Location: /student-auth/auth/login.php');
 }
